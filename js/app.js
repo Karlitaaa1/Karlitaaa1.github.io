@@ -168,42 +168,26 @@ document.getElementById('confirmDeleteButton').addEventListener('click', async (
 
 // Llamar a la función para obtener y mostrar los empleados cuando la página se carga
 document.addEventListener('DOMContentLoaded', fetchEmpleados);
-async function obtenerTipoCambio() {
-    try {
-        // CORS proxy para evitar problemas de CORS
-        const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-        const apiUrl = 'https://gee.bccr.fi.cr/Indicadores/Suscripciones/WS/wsindicadoreseconomicos.asmx/ObtenerIndicadoresEconomicos?Indicador=318&FechaInicio=29/08/2024&FechaFinal=29/08/2024&Nombre=Stephanie&SubNiveles=N&CorreoElectronico=sterogam@gmail.com&Token=TIS5MER2LS';
+    async function obtenerTipoCambio() {
+            try {
+                // Realizar la solicitud HTTP GET
+                const response = await fetch('http://tarea1karla.somee.com/api/TipoCambio/ObtenerTipoCambio');
 
-        // Construir la URL completa para la solicitud
-        const fullUrl = corsProxy + apiUrl;
+                // Verificar si la respuesta fue exitosa
+                if (!response.ok) {
+                    throw new Error(`Error en la solicitud: ${response.statusText}`);
+                }
 
-        // Realizar la solicitud HTTP GET
-        const response = await fetch(fullUrl);
+                // Obtener el contenido de la respuesta
+                const data = await response.json();
 
-        // Verificar si la respuesta fue exitosa
-        if (!response.ok) {
-            throw new Error(`Error en la solicitud: ${response.statusText}`);
+                // Mostrar el contenido en el elemento <p> con id "cambio"
+                document.getElementById('cambio').textContent = `Tipo de cambio: ${data}`;
+            } catch (error) {
+                // Manejar errores
+                document.getElementById('cambio').textContent = `Error al consumir la API: ${error.message}`;
+            }
         }
 
-        // Obtener el contenido de la respuesta
-        const content = await response.text();
-
-        // Parsear el XML a un objeto DOMParser
-        const parser = new DOMParser();
-        const xmlDocument = parser.parseFromString(content, 'text/xml');
-
-        // Obtener el elemento deseado del XML
-        const dataElement = xmlDocument.querySelector('INGC011_CAT_INDICADORECONOMIC');
-        const numValor = dataElement?.querySelector('NUM_VALOR')?.textContent || 'No disponible';
-
-        // Mostrar el contenido en el elemento <p> con id "cambio"
-        document.getElementById('cambio').textContent = `Tipo de cambio: ${numValor}`;
-    } catch (error) {
-        // Manejar errores
-        document.getElementById('cambio').textContent = `Error al consumir la API: ${error.message}`;
-    }
-}
-
-// Llamar a la función para realizar la solicitud
-obtenerTipoCambio();
-
+        // Llamar a la función para realizar la solicitud
+        obtenerTipoCambio();
